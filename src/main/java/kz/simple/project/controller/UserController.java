@@ -2,6 +2,7 @@ package kz.simple.project.controller;
 
 
 
+import jakarta.validation.Valid;
 import kz.simple.project.entity.User;
 import kz.simple.project.service.UserService;
 import lombok.AllArgsConstructor;
@@ -37,16 +38,18 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity addUser(@RequestBody User user){
-        if(user.getName().equals("") || user.getSalary() == 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The NAME or SALARY fields are empty");
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(user));
+    public ResponseEntity<User> addUser(@Valid @RequestBody User user){
+        return new ResponseEntity<>(userService.addUser(user), HttpStatus.CREATED);
     }
 
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id){
         userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<User> updateUser(@Valid @RequestBody User user){
+        return new ResponseEntity<>(userService.updateUser(user), HttpStatus.NO_CONTENT);
     }
 }

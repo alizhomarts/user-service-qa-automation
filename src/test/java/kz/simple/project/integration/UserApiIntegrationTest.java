@@ -3,8 +3,6 @@ package kz.simple.project.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import kz.simple.project.entity.User;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +79,7 @@ public class UserApiIntegrationTest {
 
         given()
         .when()
-                .post("/delete/{id}", userId)
+                .delete("/delete/{id}", userId)
         .then()
                 .statusCode(204);
     }

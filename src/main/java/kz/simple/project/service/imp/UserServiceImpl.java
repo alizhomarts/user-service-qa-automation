@@ -31,7 +31,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        if (getUser(id).isPresent()) {
+            userRepository.deleteById(id);
+        }
+    }
+
+    @Override
+    public User updateUser(User user) {
+        Optional<User> oldUser = getUser(user.getId());
+
+        return oldUser
+                .map(newUser -> {
+                    newUser.setName(user.getName());
+                    newUser.setSalary(user.getSalary());
+                    return newUser;
+                })
+                .map(userRepository::save)
+                .orElse(null);
     }
 
     @Override
