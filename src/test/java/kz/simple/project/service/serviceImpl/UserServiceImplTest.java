@@ -122,6 +122,17 @@ class UserServiceImplTest {
     }
 
     @Test
+    void updateUserTest() {
+        Long userId = 1L;
+        User user = new User(userId, "Arman", 350000);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        userService.updateUser(user);
+
+        verify(userRepository, times(1)).save(user);
+    }
+
+    @Test
     void getUser_NotFound_Test(){
         Long nonExistenUserId = 99L;
 

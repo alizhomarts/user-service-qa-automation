@@ -12,8 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.springframework.http.MediaType;
@@ -61,7 +60,7 @@ class UserControllerTest {
         when(userService.getAllUsers()).thenReturn(List.of(user1, user2));
 
         mockMvc.perform(get("/api/users")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1L))
                 .andExpect(jsonPath("$[0].name").value("Ramazan"))
@@ -80,7 +79,7 @@ class UserControllerTest {
         when(userService.getUser(userId)).thenReturn(Optional.of(user));
 
         mockMvc.perform(get("/api/users/{id}", userId)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()) // Ожидаем 201 Created
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.name").value("Test"))
@@ -94,8 +93,26 @@ class UserControllerTest {
 
         doNothing().when(userService).deleteUser(userId);
 
-        mockMvc.perform(post("/api/users/delete/{id}", userId))
+        mockMvc.perform(delete("/api/users/delete/{id}", userId))
                 .andExpect(status().isNoContent());
         verify(userService, times(1)).deleteUser(userId);
+    }
+
+    @Test
+    void updateUser() throws Exception{
+        User user = new User(1L, "Test", 200000);
+        String userJson = objectMapper.writeValueAsString(user);
+
+        when(userService.updateUser(any(User.class))).thenReturn(user);
+
+        mockMvc.perform(put("/api/users/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.name").value("Test"))
+                .andExpect(jsonPath("$.salary").value(200000));
+
+        verify(userService, times(1)).updateUser(any(User.class));
     }
 }

@@ -26,7 +26,7 @@ public class UserApiIntegrationTest {
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         // Устанавливаем базовые параметры для всех запросов Rest Assured
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = port;
@@ -60,7 +60,7 @@ public class UserApiIntegrationTest {
     }
 
     @Test
-    void getById(){
+    void getById() {
         Long userId = 1L;
 
         given()
@@ -74,7 +74,7 @@ public class UserApiIntegrationTest {
     }
 
     @Test
-    void deleteUser(){
+    void deleteUser() {
         Long userId = 3L;
 
         given()
@@ -82,6 +82,22 @@ public class UserApiIntegrationTest {
                 .delete("/delete/{id}", userId)
         .then()
                 .statusCode(204);
+    }
+
+    @Test
+    void updateUser() {
+        String userJson = "{\"id\": 1,\"name\": \"Test\", \"salary\": 500000}";
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(userJson)
+        .when()
+                .put("/update")
+        .then()
+                .statusCode(200)
+                .body("id", equalTo(1))
+                .body("name", equalTo("Test"))
+                .body("salary", equalTo(500000));
     }
 
 }
